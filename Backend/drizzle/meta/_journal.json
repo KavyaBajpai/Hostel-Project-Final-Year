@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1756226410838,
+      "tag": "0000_daffy_goblin_queen",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1775558400000,
+      "tag": "0001_attendance_records",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1775558500000,
+      "tag": "0002_reference_face_image",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1775558600000,
+      "tag": "0003_attendance_verification_fields",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1775558700000,
+      "tag": "0004_hostel_geofences_location",
+      "breakpoints": true
+    }
+  ]
+}
