@@ -6,6 +6,7 @@ import { residentDocs } from "../schema/schema.js";
 import {v2 as cloudinary} from "cloudinary"
 import { queueAttendanceVerification } from "../utils/attendanceVerification.js";
 import { validateAttendanceLocation } from "../utils/geofence.js";
+import { notifyWardensNewLeave, notifyWardensNewComplaint } from "../utils/webPush.js";
 //working
 export const fillResidentProfile = async (req, res) => {
   try {
@@ -113,7 +114,7 @@ export const applyLeave = async (req, res) => {
   try {
     const db = await connectToDB();
 
-    let data= await db.insert(leaves).values({
+    const [inserted] = await db.insert(leaves).values({
       userId,
       fromDate,
       toDate,
@@ -126,11 +127,71 @@ export const applyLeave = async (req, res) => {
       hostelName,
       year,
       status: "pending",
-    });
+    }).returning();
 
-    return res.status(201).json({ data: data, message: "Leave application submitted." });
+    const residentName = req.profile?.name || req.user?.name || "A resident";
+    notifyWardensNewLeave({
+      hostelName,
+      residentName,
+      leaveId: inserted?.id,
+      fromDate,
+      toDate,
+    }).catch(() => {});
+
+    return res.status(201).json({ data: inserted, message: "Leave application submitted." });
   } catch (error) {
     console.error("Error applying leave:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const viewMyLeaves = async (req, res) => {
+  const userId = req.user.id;
+  const { session, year } = req.academic;
+  const { status, semester } = req.query;
+
+  try {
+    const db = await connectToDB();
+
+    const conditions = [
+      eq(leaves.userId, userId),
+      eq(leaves.session, session),
+    ];
+
+    if (semester) {
+      const sem = Number(semester);
+      if (!validateSemester(sem, year)) {
+        return res.status(400).json({ message: "Invalid semester for your year of study." });
+      }
+      conditions.push(eq(leaves.semester, sem));
+    }
+
+    if (status) {
+      conditions.push(eq(leaves.status, String(status).toLowerCase()));
+    }
+
+    const result = await db
+      .select({
+        id: leaves.id,
+        fromDate: leaves.fromDate,
+        toDate: leaves.toDate,
+        reason: leaves.reason,
+        destination: leaves.destination,
+        contactNo: leaves.contactNo,
+        status: leaves.status,
+        semester: leaves.semester,
+        session: leaves.session,
+      })
+      .from(leaves)
+      .where(and(...conditions))
+      .orderBy(desc(leaves.id));
+
+    return res.status(200).json({
+      leaves: result,
+      message: "Leave applications fetched successfully.",
+    });
+  } catch (err) {
+    console.error("Error fetching leave applications:", err);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -301,9 +362,19 @@ export const fileComplaint = async (req, res) => {
       })
       .returning();
 
+    const complaint = result[0];
+    const residentName = req.profile?.name || req.user?.name || "A resident";
+    notifyWardensNewComplaint({
+      hostelName,
+      residentName,
+      complaintId: complaint.id,
+      title,
+      category,
+    }).catch(() => {});
+
     res.status(201).json({
       message: "Complaint filed successfully.",
-      complaint: result[0]
+      complaint,
     });
   } catch (err) {
     console.error("Error in filing a complaint:", err);

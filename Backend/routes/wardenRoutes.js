@@ -1,10 +1,16 @@
 import express from 'express';
 import {viewLeaves, calculateMessRefunds, approveLeave, rejectLeave, viewComplaints, issueNotice, viewResidents, listAttendance, updateAttendanceVerification, listMessExpenses, createMessExpense, updateMessExpense, deleteMessExpense} from '../controllers/wardenControllers.js'
 import { getHostelGeofenceForWarden, upsertHostelGeofence } from '../controllers/geofenceControllers.js';
+import { getPushVapidPublicKey, subscribePush, unsubscribePush } from '../controllers/pushControllers.js';
 import { upload } from '../config/multer.js';
 import { checkHostelAccess } from '../middlewares/checkRole.js';
+import { checkWardenPushAccess } from '../middlewares/checkWardenPushAccess.js';
 import { auth } from '../middlewares/auth.js';
 const wardenRouter = express.Router();
+
+wardenRouter.get('/push/vapid-public-key', getPushVapidPublicKey);
+wardenRouter.post('/push/subscribe', auth, checkWardenPushAccess, subscribePush);
+wardenRouter.delete('/push/unsubscribe', auth, checkWardenPushAccess, unsubscribePush);
 
 wardenRouter.get('/leaves', auth, checkHostelAccess, viewLeaves);
 wardenRouter.get('/complaints', auth, checkHostelAccess, viewComplaints);
