@@ -16,6 +16,7 @@ export default function ResidentDashboard() {
       <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card title="Resident Profile" to="/resident/profile" desc="Create/update your academic and guardian profile." />
         <Card title="Apply Leave" to="/resident/leave" desc="Submit a leave application." />
+        <Card title="My Leaves" to="/resident/leaves" desc="View status of your leave applications." />
         <Card title="View Fines" to="/resident/fines" desc="Check your fines for a semester." />
         <Card title="Mess Bills" to="/resident/bill" desc="View mess bill details." />
         <Card title="Meal Opt-Outs" to="/resident/optouts" desc="Register meal opt-outs." />

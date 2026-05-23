@@ -29,6 +29,10 @@ export async function applyLeave(body) {
   const res = await api.post('/resident/leave', body);
   return res.data;
 }
+export async function getMyLeaves({ semester, status }) {
+  const res = await api.get('/resident/leaves', { params: { semester, status } });
+  return res.data;
+}
 export async function getFines(semester) {
   const res = await api.post('/resident/fines', { semester });
   return res.data;
@@ -221,5 +225,19 @@ export async function updateAttendance(id, payload) {
   return res.data;
 }
 
+export async function getPushVapidPublicKey() {
+  const res = await api.get('/warden/push/vapid-public-key');
+  return res.data;
+}
+
+export async function subscribePush(subscription) {
+  const res = await api.post('/warden/push/subscribe', subscription);
+  return res.data;
+}
+
+export async function unsubscribePush({ endpoint }) {
+  const res = await api.delete('/warden/push/unsubscribe', { data: { endpoint } });
+  return res.data;
+}
 
 export default api;

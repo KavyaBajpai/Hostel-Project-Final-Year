@@ -8,6 +8,7 @@ import { useAuth } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import RoleRoute from './components/RoleRoute.jsx'
 import ApplyLeave from './pages/resident/ApplyLeave.jsx'
+import ViewLeaves from './pages/resident/ViewLeaves.jsx'
 import Fines from './pages/resident/Fines.jsx'
 import Bills from './pages/resident/Bills.jsx'
 import Complaint from './pages/resident/Complaint.jsx'
@@ -65,6 +66,7 @@ function App() {
               </ProtectedRoute>
             } />
             <Route path="/resident/leave" element={<ProtectedRoute><RoleRoute allow={['resident']}><ApplyLeave /></RoleRoute></ProtectedRoute>} />
+            <Route path="/resident/leaves" element={<ProtectedRoute><RoleRoute allow={['resident']}><ViewLeaves /></RoleRoute></ProtectedRoute>} />
             <Route path="/resident/fines" element={<ProtectedRoute><RoleRoute allow={['resident']}><Fines /></RoleRoute></ProtectedRoute>} />
             <Route path="/resident/bill" element={<ProtectedRoute><RoleRoute allow={['resident']}><Bills /></RoleRoute></ProtectedRoute>} />
             <Route path="/resident/complaint" element={<ProtectedRoute><RoleRoute allow={['resident']}><Complaint /></RoleRoute></ProtectedRoute>} />
