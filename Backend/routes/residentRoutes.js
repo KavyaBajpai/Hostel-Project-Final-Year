@@ -1,5 +1,5 @@
 import express from 'express';
-import {applyLeave, viewOptOuts, viewFines, viewBills, uploadDocs, fileComplaint, viewComplaints, markComplaintResolved, viewMyRefund, fillResidentProfile, getResidentProfile, upsertResidence, registerMealOptOut, getNotices, getDocuments, markAttendance, getMyAttendance, uploadReferenceFaceImage} from '../controllers/residentControllers.js';
+import {applyLeave, viewMyLeaves, viewOptOuts, viewFines, viewBills, uploadDocs, fileComplaint, viewComplaints, markComplaintResolved, viewMyRefund, fillResidentProfile, getResidentProfile, upsertResidence, registerMealOptOut, getNotices, getDocuments, markAttendance, getMyAttendance, uploadReferenceFaceImage} from '../controllers/residentControllers.js';
 import { checkResidentLocation, getResidentGeofenceStatus } from '../controllers/geofenceControllers.js';
 import { auth } from '../middlewares/auth.js';
 
@@ -8,6 +8,7 @@ import { attachAcademicInfo } from '../middlewares/attachAcademicInfo.js';
 
 const residentRouter = express.Router()
 residentRouter.post('/leave', auth, attachResidentProfile, attachAcademicInfo, applyLeave);
+residentRouter.get('/leaves', auth, attachResidentProfile, attachAcademicInfo, viewMyLeaves);
 // Use POST so controllers read semester from req.body only
 residentRouter.post('/fines', auth, attachResidentProfile,  attachAcademicInfo, viewFines);
 residentRouter.post('/refund', auth, attachResidentProfile,  attachAcademicInfo, viewMyRefund);

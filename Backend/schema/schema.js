@@ -204,3 +204,12 @@ export const messRefunds = pgTable("mess_refunds", {
   totalRefund: decimal("total_refund", { precision: 10, scale: 2 }).notNull(),
   calculatedAt: timestamp("calculated_at").defaultNow().notNull(),
 });
+
+export const pushSubscriptions = pgTable("push_subscriptions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  endpoint: text("endpoint").notNull().unique(),
+  p256dh: text("p256dh").notNull(),
+  auth: text("auth").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
